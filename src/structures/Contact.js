@@ -183,8 +183,7 @@ class Contact extends Base {
      */
     async getAbout() {
         const about = await this.client.pupPage.evaluate(async (contactId) => {
-            const wid = window.Store.WidFactory.createWid(contactId);
-            return window.Store.StatusUtils.getStatus(wid);
+            return window.Store.Wap.statusFind(contactId);
         }, this.id._serialized);
 
         if (typeof about.status !== 'string')
@@ -194,19 +193,18 @@ class Contact extends Base {
     }
 
     /**
-     * Gets the Contact's common groups with you. Returns empty array if you don't have any common group.
-     * @returns {Promise<WAWebJS.ChatId[]>}
+     * Gets the online status of the contact. Returns true if the user is online.
+     * @returns {Promise<?string>}
      */
-    async getCommonGroups() {
-        return await this.client.getCommonGroups(this.id._serialized);
-    }
-    
-    /**
-     * Returns Unix timestamp for when the user was last seen.
-     * @returns {Promise<number|undefined>}
-     */
-    getLastSeen() {
-        return this.client.getLastSeen(this.id._serialized);
+    async getOnlineStatus() {
+        if (this.isMe) return null;
+
+        const chatId = this.id._serialized;
+        return this.client.pupPage.evaluate(async (chatId) => {
+            let chat = window.Store.Chat.get(chatId);
+            return chat.presence.isOnline;
+        }, chatId);
+        
     }
 }
 
