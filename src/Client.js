@@ -3,6 +3,7 @@
 const EventEmitter = require('events');
 const puppeteer = require('puppeteer');
 const moduleRaid = require('@pedroslopez/moduleraid/moduleraid');
+const jsQR = require('jsqr');
 
 const Util = require('./util/Util');
 const InterfaceController = require('./util/InterfaceController');
@@ -1085,6 +1086,17 @@ class Client extends EventEmitter {
         });
 
         return blockedContacts.map(contact => ContactFactory.create(this.client, contact));
+    }
+
+    /**
+     * Returns Unix timestamp for when the user was last seen.
+     * @param {string} chatId
+     * @returns {Promise<number|undefined>}
+     */
+    getLastSeen(chatId) {
+        return this.pupPage.evaluate(chatId => {
+            return window.WWebJS.getLastSeen(chatId);
+        }, chatId);
     }
 }
 
