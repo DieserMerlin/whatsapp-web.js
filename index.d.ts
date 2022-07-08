@@ -912,9 +912,11 @@ declare namespace WAWebJS {
         /** Gets the Contact's current "about" info. Returns null if you don't have permission to read their status.  */
         getAbout: () => Promise<string | null>,
         
+        /** Gets the online status of the contact. Returns true if the user is online. */
+        getOnlineStatus(): () => Promise<boolean>,
+
         /** Gets the Contact's common groups with you. Returns empty array if you don't have any common group. */
         getCommonGroups: () => Promise<ChatId[]>
-
     }
 
     export interface ContactId {

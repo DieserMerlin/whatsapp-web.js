@@ -194,13 +194,27 @@ class Contact extends Base {
     }
 
     /**
+     * Gets the online status of the contact. Returns true if the user is online.
+     * @returns {Promise<?string>}
+     */
+    async getOnlineStatus() {
+        if (this.isMe) return null;
+
+        const chatId = this.id._serialized;
+        return this.client.pupPage.evaluate(async (chatId) => {
+            let chat = window.Store.Chat.get(chatId);
+            return chat.presence.isOnline;
+        }, chatId);
+        
+    }
+  
+    /**
      * Gets the Contact's common groups with you. Returns empty array if you don't have any common group.
      * @returns {Promise<WAWebJS.ChatId[]>}
      */
     async getCommonGroups() {
         return await this.client.getCommonGroups(this.id._serialized);
     }
-    
 }
 
 module.exports = Contact;
